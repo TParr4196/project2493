@@ -1,3 +1,65 @@
+// Adapted from activity 4-2
+const mysql = require('mysql2/promise');
+
+const mysql_host = process.env.MYSQL_HOST || 'localhost';
+const mysql_port = process.env.MYSQL_PORT || '3306';
+const mysql_db = process.env.MYSQL_DB || 'messagesdb';
+const mysql_user = process.env.MYSQL_USER || 'messagesuser';
+const mysql_password = process.env.MYSQL_PASSWORD;
+
+const mysqlPool = mysql.createPool({
+  connectionLimit: 10,
+  host: mysql_host,
+  port: mysql_port,
+  database: mysql_db,
+  user: mysql_user,
+  password: mysql_password
+});
+
+async function init_db() {
+  await mysqlPool.query("drop table if exists photo");
+  await mysqlPool.query("drop table if exists review");
+  await mysqlPool.query("drop table if exists businesses");
+  await mysqlPool.query("drop table if exists error");
+
+  //https://www.w3schools.com/sql/sql_create_table.asp used to help with datatype syntax on 5/7/25
+  await mysqlPool.query(`create table businesses (
+      id integer primary key auto_increment,
+      ownerid int NOT NULL,
+      name varchar(255) NOT NULL,
+      address varchar(255) NOT NULL,
+      city varchar(255) NOT NULL,
+      state varchar(255) NOT NULL,
+      zip varchar(255) NOT NULL,
+      phone varchar(255) NOT NULL,
+      category varchar(255) NOT NULL,
+      subcategory varchar(255) NOT NULL,
+      website varchar(255),
+      email varchar(255),
+  )`);
+  //https://www.w3schools.com/sql/sql_foreignkey.asp for help with foreign key syntax
+  await mysqlPool.query(`create table photos (
+    id integer primary key auto_increment,
+    userid int NOT NULL,
+    foreign key(businessid) REFERENCES businesses(id) NOT NULL,
+    caption varchar(255),
+  )`);
+  await mysqlPool.query(`create table review (
+    id integer primary key auto_increment,
+    userid int NOT NULL,
+    foreign key(businessid) REFERENCES businesses(id) NOT NULL,
+    dollars int NOT NULL,
+    stars int NOT NULL,
+    review varchar(255),
+  )`);
+  await mysqlPool.query(`create table errors (
+    id integer primary key auto_increment,
+    error varchar(255),
+  )`);
+}
+
+init_db();
+
 const router = require('express').Router();
 const { validateAgainstSchema, extractValidFields } = require('../lib/validation');
 

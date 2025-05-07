@@ -1,0 +1,32 @@
+# adapted from challenge 4-2
+services:
+  messages:
+    build: .   # Make image from Dockerfile in cwd
+    ports:
+      - 8000:8000  # Export port 8000
+
+    environment:
+      - MYSQL_HOST=mysql
+
+    env_file:
+      - .env     # Get password from this file
+    
+    depends_on:  # Wait for MySQL to launch
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql   # Image name to run
+
+    environment:   # Set env vars
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=messagesdb
+      - MYSQL_USER=messagesuser
+
+    env_file:
+      - .env      # Get password from this file
+
+    healthcheck:  # Test for MySQL health
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 2s  # Run every 2 seconds
+      retries: 60  # Giving up after 60 tries
