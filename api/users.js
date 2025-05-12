@@ -1,17 +1,30 @@
+const mysql = require('mysql2/promise');
+
+const mysql_host = process.env.MYSQL_HOST || 'localhost';
+const mysql_port = process.env.MYSQL_PORT || '3306';
+const mysql_db = process.env.MYSQL_DB || 'mysqldb';
+const mysql_user = process.env.MYSQL_USER || 'mysqluser';
+const mysql_password = process.env.MYSQL_PASSWORD;
+
+const mysqlPool = mysql.createPool({
+  connectionLimit: 10,
+  host: mysql_host,
+  port: mysql_port,
+  database: mysql_db,
+  user: mysql_user,
+  password: mysql_password
+});
+
 const router = require('express').Router();
 
 exports.router = router;
 
-const { businesses } = require('./businesses');
-const { reviews } = require('./reviews');
-const { photos } = require('./photos');
-
 /*
  * Route to list all of a user's businesses.
  */
-router.get('/:userid/businesses', function (req, res) {
+router.get('/:userid/businesses', async function (req, res) {
   const userid = parseInt(req.params.userid);
-  const userBusinesses = businesses.filter(business => business && business.ownerid === userid);
+  const userBusinesses = await mysqlPool.query(`SELECT * FROM businesses WHERE ownerid = ${userid}`);
   res.status(200).json({
     businesses: userBusinesses
   });
@@ -20,9 +33,9 @@ router.get('/:userid/businesses', function (req, res) {
 /*
  * Route to list all of a user's reviews.
  */
-router.get('/:userid/reviews', function (req, res) {
+router.get('/:userid/reviews', async function (req, res) {
   const userid = parseInt(req.params.userid);
-  const userReviews = reviews.filter(review => review && review.userid === userid);
+  const userReviews = await mysqlPool.query(`SELECT * FROM reviews WHERE userid = ${userid}`);
   res.status(200).json({
     reviews: userReviews
   });
@@ -31,9 +44,9 @@ router.get('/:userid/reviews', function (req, res) {
 /*
  * Route to list all of a user's photos.
  */
-router.get('/:userid/photos', function (req, res) {
+router.get('/:userid/photos', async function (req, res) {
   const userid = parseInt(req.params.userid);
-  const userPhotos = photos.filter(photo => photo && photo.userid === userid);
+  const userPhotos = await mysqlPool.query(`SELECT * FROM photos WHERE userid = ${userid}`);
   res.status(200).json({
     photos: userPhotos
   });

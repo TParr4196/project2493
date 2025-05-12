@@ -1,18 +1,5 @@
 [
   {
-    "id": 0,
-    "ownerid": 0,
-    "name": "Block 15",
-    "address": "300 SW Jefferson Ave.",
-    "city": "Corvallis",
-    "state": "OR",
-    "zip": "97333",
-    "phone": "541-758-2077",
-    "category": "Restaurant",
-    "subcategory": "Brewpub",
-    "website": "http://block15.com"
-  },
-  {
     "id": 1,
     "ownerid": 1,
     "name": "Corvallis Brewing Supply",

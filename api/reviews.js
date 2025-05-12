@@ -1,10 +1,26 @@
+"use strict";
+require('dotenv').config();
+const mysql = require('mysql2/promise');
+
+const mysql_host = process.env.MYSQL_HOST || 'localhost';
+const mysql_port = process.env.MYSQL_PORT || '3306';
+const mysql_db = process.env.MYSQL_DB || 'mysqldb';
+const mysql_user = process.env.MYSQL_USER || 'mysqluser';
+const mysql_password = process.env.MYSQL_PASSWORD;
+
+const mysqlPool = mysql.createPool({
+  connectionLimit: 10,
+  host: mysql_host,
+  port: mysql_port,
+  database: mysql_db,
+  user: mysql_user,
+  password: mysql_password
+});
+
 const router = require('express').Router();
 const { validateAgainstSchema, extractValidFields } = require('../lib/validation');
 
-const reviews = require('../data/reviews');
-
 exports.router = router;
-exports.reviews = reviews;
 
 /*
  * Schema describing required/optional fields of a review object.
@@ -21,7 +37,7 @@ const reviewSchema = {
 /*
  * Route to create a new review.
  */
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
   if (validateAgainstSchema(req.body, reviewSchema)) {
 
     const review = extractValidFields(req.body, reviewSchema);
@@ -29,19 +45,16 @@ router.post('/', function (req, res, next) {
     /*
      * Make sure the user is not trying to review the same business twice.
      */
-    const userReviewedThisBusinessAlready = reviews.some(
-      existingReview => existingReview
-        && existingReview.ownerid === review.ownerid
-        && existingReview.businessid === review.businessid
-    );
+    const userReviewedThisBusinessAlready = await mysqlPool.query(`select * FROM reviews where userid = ${review.userid} and businessid = ${review.businessid}`);
 
-    if (userReviewedThisBusinessAlready) {
+    if (userReviewedThisBusinessAlready[0].length > 0) {
       res.status(403).json({
         error: "User has already posted a review of this business"
       });
     } else {
-      review.id = reviews.length;
-      reviews.push(review);
+      let query = `insert into reviews (userid, businessid, dollars, stars, review) values\n`;
+      query += `("${review.userid}", "${review.businessid}", "${review.dollars}", "${review.stars}", "${review.review ?? ""}");`;
+      await mysqlPool.query(query);
       res.status(201).json({
         id: review.id,
         links: {
@@ -61,10 +74,13 @@ router.post('/', function (req, res, next) {
 /*
  * Route to fetch info about a specific review.
  */
-router.get('/:reviewID', function (req, res, next) {
+router.get('/:reviewID', async function (req, res, next) {
   const reviewID = parseInt(req.params.reviewID);
-  if (reviews[reviewID]) {
-    res.status(200).json(reviews[reviewID]);
+  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
+  if (review_raw[0].length == 1) {
+    const review = {};
+    Object.assign(review, review_raw[0]);
+    res.status(200).json(review);
   } else {
     next();
   }
@@ -73,20 +89,20 @@ router.get('/:reviewID', function (req, res, next) {
 /*
  * Route to update a review.
  */
-router.put('/:reviewID', function (req, res, next) {
+router.put('/:reviewID', async function (req, res, next) {
   const reviewID = parseInt(req.params.reviewID);
-  if (reviews[reviewID]) {
-
+  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
+  if (review_raw[0].length == 1) {
     if (validateAgainstSchema(req.body, reviewSchema)) {
       /*
        * Make sure the updated review has the same businessid and userid as
        * the existing review.
        */
       let updatedReview = extractValidFields(req.body, reviewSchema);
-      let existingReview = reviews[reviewID];
+      let existingReview = review_raw[0][0] ?? {};
       if (updatedReview.businessid === existingReview.businessid && updatedReview.userid === existingReview.userid) {
-        reviews[reviewID] = updatedReview;
-        reviews[reviewID].id = reviewID;
+        let query = `update reviews set id = ${reviewID}, userid = ${updatedReview.userid}, businessid = ${updatedReview.businessid}, dollars = ${updatedReview.dollars}, stars = ${updatedReview.stars}, review = "${updatedReview.caption ?? ""}" where id = ${reviewID};`
+        await mysqlPool.query(query);
         res.status(200).json({
           links: {
             review: `/reviews/${reviewID}`,
@@ -112,10 +128,11 @@ router.put('/:reviewID', function (req, res, next) {
 /*
  * Route to delete a review.
  */
-router.delete('/:reviewID', function (req, res, next) {
+router.delete('/:reviewID', async function (req, res, next) {
   const reviewID = parseInt(req.params.reviewID);
-  if (reviews[reviewID]) {
-    reviews[reviewID] = null;
+  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
+  if (review_raw[0].length==1) {
+    const success = await mysqlPool.query(`delete from reviews where id = ${reviewID}`);
     res.status(204).end();
   } else {
     next();

@@ -20,8 +20,8 @@ services:
 
     environment:   # Set env vars
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=messagesdb
-      - MYSQL_USER=messagesuser
+      - MYSQL_DATABASE=mysqldb
+      - MYSQL_USER=mysqluser
 
     env_file:
       - .env      # Get password from this file
