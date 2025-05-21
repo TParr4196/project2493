@@ -20,12 +20,14 @@ const mysqlPool = mysql.createPool({
 const business_data = require('../data/businesses');
 const photo_data = require('../data/photos');
 const review_data = require('../data/reviews');
+const user_data = require('../data/users');
 
 async function init_db() {
   await mysqlPool.query("drop table if exists photos");
   await mysqlPool.query("drop table if exists reviews");
   await mysqlPool.query("drop table if exists businesses");
   await mysqlPool.query("drop table if exists errors");
+  await mysqlPool.query("drop table if exists users");
 
   //https://www.w3schools.com/sql/sql_create_table.asp used to help with datatype syntax on 5/7/25
   await mysqlPool.query(`create table businesses (
@@ -63,6 +65,13 @@ async function init_db() {
     id integer primary key auto_increment,
     error varchar(255)
   );`);
+  await mysqlPool.query(`create table users (
+    id integer primary key auto_increment,
+    name varchar(255) not null,
+    email varchar(255) not null unique,
+    password varchar(255) not null,
+    admin boolean
+  );`);
 
   //got help from chatgpt with grammar like missing quotes on insert queries
   let query = `insert into businesses (id, ownerid, name, address, city, state, zip, phone, category, subcategory, website, email) values\n`
@@ -86,6 +95,14 @@ async function init_db() {
     query+=`(${review_data[i].id}, ${review_data[i].userid}, ${review_data[i].businessid}, ${review_data[i].dollars}, ${review_data[i].stars}, "${review_data[i].review ?? ""}"),\n`
   }
   query+=`(${review_data[review_data.length-1].id}, ${review_data[review_data.length-1].userid}, ${review_data[review_data.length-1].businessid}, "${review_data[review_data.length-1].dollars}", "${review_data[review_data.length-1].stars}", "${business_data[business_data.length-1].review ?? ""}");`
+  await mysqlPool.query(query);
+
+  //users
+  query = `insert into users (name, email, password, admin) values\n`
+  for (let i = 0; i<user_data.length-1; i++){
+    query+=`("${user_data[i].name}", "${user_data[i].email}", "${user_data[i].password}", ${user_data[i].admin ?? false}),\n`
+  }
+  query+=`("${user_data[user_data.length-1].name}", "${user_data[user_data.length-1].email}", "${user_data[user_data.length-1].password}", ${true});`
   await mysqlPool.query(query);
 }
 
@@ -204,8 +221,8 @@ router.get('/:businessid', async function (req, res, next) {
      * new object containing all of the business data, including reviews and
      * photos
      */
-    const photos = await mysqlPool.query(`select * FROM reviews where businessid = ${businessid}`);
-    const reviews = await mysqlPool.query(`select * FROM photos where businessid = ${businessid}`);
+    const photos = await mysqlPool.query(`select * FROM photos where businessid = ${businessid}`);
+    const reviews = await mysqlPool.query(`select * FROM reviews where businessid = ${businessid}`);
     const business = {
       reviews: reviews,
       photos: photos

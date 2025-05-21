@@ -1,177 +1,169 @@
-# Assignment 2
+# Assignment 3
 
-The goal of this assignment is to start using a real database to store
-application data.  The assignment requirements are listed below.
+The goal of this assignment is to incorporate authorization and
+authentication into our businesses API.  There are a few parts to this
+assignment, as described below.
 
 You are provided some starter code in this repository that implements a
-solution to assignment 1.  The starter code's API server is implemented
-in `server.js`, and individual routes are modularized within the `api/`
-directory.  Tests and a testing environment for the API are included in
-the `tests/` directory.  You can import these tests into either Postman
-or Insomnia and build on them if you like.  Note that, depending on
-where you're running your API server, you may need to update the
-`baseUrl` variable in the included testing environment to reflect the
-URL for your own server.
-
-The starter code also includes an `openapi.yaml` file in the `public/`
-directory.  You can import this file into the OpenAPI editor at
-https://editor.swagger.io/ to generate documentation for the server to
-see how its endpoints are set up.
+MySQL/Sequelize-based solution to assignment 2.  The starter code
+contains the following components:
+  * An API server is implemented in `server.js`.
+  * Individual API routes are modularized within the `api/` directory.
+  * Sequelize models are implemented in the `models/` directory.
+  * Tests and a testing environment for the API are included in the
+    `tests/` directory. You can import these tests into either Postman
+    or Insomnia and build on them if you like. Note that, depending on
+    where you're running your API server, you may need to update the
+    `baseUrl` variable in the included testing environment to reflect
+    the URL for your own server.
+  * A script in `initDb.js` that populates the database with initial
+    data from the `data/` directory.  You can run this script by running
+    `npm run initdb`.
+  * A Docker Compose specification in `compose.yml`.  This specification
+    will launch the entire application from scratch, including
+    populating the database using `initDb.js`.  Note that if you use
+    this specification to launch the app, the `db-init` service and the
+    `api` service will fail with an error (`ECONNREFUSED`) and be
+    restarted continually until the database service is running and the
+    database server itself is ready to accept connections.  Note that
+    the Docker Compose specification relies on some environment
+    variables being set in the included `.env` file.
 
 Feel free to use this code as your starting point for this assignment.
-You may also use your own solution to assignment 1 as your starting
-point if you like.
+You may also use your own solution to assignment 2 as your starting
+point if you like, or you may convert the existing solution to use
+MongoDB.  If you do either of those things, you must ensure that your
+API implementation matches the one from the starter code (i.e. it has
+all the same endpoints, etc.).
 
-## Use a database to power your API
+## 1. Implement an API endpoint for creating new users
 
-Your overarching goal for this assignment is to modify the API server to
-use a database to store the following resources:
+Your first task for this assignment is to implement an API endpoint to
+enable the creation and storage of application users.  Specifically, you
+should create a `POST /users` API endpoint through which new users can
+register.  When a user registers, they should provide their name, email
+address, and password, and you should salt and hash the password on the
+server before storing it.
 
-  * Businesses
-  * Reviews
-  * Photos
+If you work with the starter code for this assignment, you'll need to
+create a Sequelize `User` model to represent users.  If you work with
+another version of the code, you'll have to model users in an
+appropriate way.  However you do it, you should store the following
+information for each user:
 
-You may choose either MySQL or MongoDB for this purpose (or another DB
-implementation you're interested in, with permission).  Whichever
-database you choose, it should completely replace the starter code's
-existing JSON/in-memory storage for these resources.  In other words,
-you should update all API endpoints in the original starter code to use
-your database.
+  * `id` - The primary key for the user (if you're using MongoDB, it's
+    fine to stick with the default primary key name `_id`)
+  * `name` - User's full name
+  * `email` - User's email address (which must be unique among all
+    users)
+  * `password` - User's hashed/salted password
+  * `admin` - A boolean flag indicating whether the user has
+    administrative permissions (`false` by default)
 
-You should use the [official MySQL Docker
-image](https://hub.docker.com/_/mysql/) or the [official MongoDB Docker
-image](https://hub.docker.com/_/mongo) from Docker Hub to power your
-database.  Whichever database you choose, your implementation should
-satisfy the criteria described below.
+Importantly, you'll need to make sure you hash and salt users passwords
+before storing them in your database.  If you stick with the Sequelize
+implementation from the starter code, the easiest way to do this is to
+use a [Sequelize
+setter](https://sequelize.org/docs/v6/core-concepts/getters-setters-virtuals/#setters)
+for your password field.
 
-## Database initialization
+Also, note that the starter code contains some user data in
+`data/users.json`, which you can use to populate some initial users into
+your database.  If you're using the starter code's Sequelize
+implementation and populate your database using `initDb.js`, you can add
+additional code there to populate the users table in a manner similar to
+the way business, review, and photo data is populated using
+`bulkCreate()`.  If you do this, the values of the `ownerId` field in
+the initial business data should map to the correct users from the
+initial user data.
 
-Before you run your application for the first time, you'll have to make
-sure your database is initialized and ready to store your application
-data.  Use the mechanisms described below to initialize your database
-when you launch the database container, so the database is ready to use
-when you launch your app.
+Finally, note that you may have to manually connect to the database
+(e.g. using the MySQL terminal monitor) to insert at least one user with
+administrative permissions (i.e. for whom the `admin` flag is `true`).
+If you do this, you can use the following pre-salted/hashed version of
+the password "hunter2":
 
-### MySQL
+```
+$2a$08$Y00/JO/uN9n0dHKuudRX2eKksWMIHXDLzHWKuz/K67alAYsZRRike
+```
 
-If you're using MySQL, you should make sure to set the following
-environment variables when launching your database container:
+## 2. Enable JWT-based user logins and implement a user data access endpoint
 
-  * `MYSQL_ROOT_PASSWORD` - This specifies the password that is set for
-    the MySQL `root` user.  You can also use
-    `MYSQL_RANDOM_ROOT_PASSWORD` to allow the container to generate a
-    random password.
+Once you have enabled user registration for your application, implement
+a new `POST /users/login` API endpoint that allows a registered user to
+log in by sending their email address and password.  If the
+email/password combination is valid, you should respond with a JWT
+token, which the user can then send with future requests to authenticate
+themselves.  The JWT token payload should contain the user's ID (with
+which you should be able to fetch details about the user from the
+database) and any other information needed to implement the features
+described in this assignment, and it should expire after 24 hours.
 
-  * `MYSQL_DATABASE` - This specifies the name of a MySQL database to be
-    created when your container first starts.
+If a user attempts to log in with an invalid username or password, you
+should respond with a 401 error.
 
-  * `MYSQL_USER` and `MYSQL_PASSWORD` - These are used to create a new
-    user, in addition to the `root` user, who will have permissions only
-    for the database named in `MYSQL_DATABASE`.  This is the user you
-    should use to connect to your database from your API server.
+In addition, you should create a `GET /users/{userId}` API endpoint that
+returns information about the specified user (excluding their password).
 
-If you use Sequelize to interact with your MySQL database, Sequelize
-will handle the creation of tables for you.
+## 3. Require authorization to perform certain API actions
 
-### MongoDB
+Once users can log in, modify your API to implement the following
+authorization scheme:
+  * Only an authorized user can see their own user data and their own
+    lists of businesses, reviews, and photos.  In other words, the
+    following API endpoints should verify that the `userId` specified in
+    the URL path matches the ID of the logged-in user (as indicated by a
+    valid JWT provided by the client):
+    * `GET /users/{userId}`
+    * `GET /users/{userId}/businesses`
+    * `GET /users/{userId}/photos`
+    * `GET /users/{userId}/reviews`
 
-If you're using MongoDB, you should make sure to set the following
-environment variables when launching your database container:
+  * Only an authorized user can create new businesses, reviews, and
+    photos.  In other words, the following API endpoints must ensure
+    that a user is logged in and that the user ID specified in the POST
+    request body matches the ID of the logged-in user:
+    * `POST /businesses`
+    * `POST /photos`
+    * `POST /reviews`
 
-  * `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` -
-    These are used to create the MongoDB `root` user.
+  * Only an authorized user can modify or delete their own businesses,
+    reviews, and photos.  In other words, the following API endpoints
+    must ensure that a user is logged in and that the user ID for the
+    entity being modified/deleted matches the ID of the logged-in user:
+    * `PUT /businesses`, `DELETE /businesses`
+    * `PUT /photos`, `DELETE /photos`
+    * `PUT /reviews`, `DELETE /reviews`
 
-  * `MONGO_INITDB_DATABASE` - This specifies the name of a MongoDB
-    database to be created when your container first starts.
+  * A user with `admin` permissions may perform any action, including
+    creating content or fetching/modifying/deleting the content of any
+    user.
 
-**While it is a security risk to do so in a production setting**, it's
-fine if you interact with the database from your API server as the ROOT
-user for this assignment.  Because MongoDB generally uses a "create on
-first use" approach, you won't have to worry about initializing
-collections.
+  * Only a user with `admin` permissions may create other `admin` users,
+    i.e. the creation of `admin` users must be accompanied by a valid
+    JWT for a logged-in `admin` user.
 
-## Database organization
+All authorized endpoints should respond with an error if the logged-in
+user is not authorized or if no user is logged in (i.e. no JWT is
+provided).
 
-Your database should store all resource data (i.e. businesses, photos,
-and reviews) for the API.  Because the resources you're working with are
-closely tied to each other (e.g. each review is tied to both a specific
-business and a specific user), you'll have to think carefully about how
-you organize and access them in your database.  Some suggestions are
-included below for each database.
+## Extra credit: rate limiting
 
-### MySQL
+For 10 points of extra credit, you can implement a rate-limiting scheme
+that works as follows:
 
-If you're using MySQL, you will likely want to use [foreign
-keys](https://dev.mysql.com/doc/refman/8.0/en/example-foreign-keys.html)
-to link reviews and photos to their corresponding business.  If you're
-using Sequelize, you can use
-[associations](https://sequelize.org/docs/v6/core-concepts/assocs/) to
-automatically manage foreign keys for you.
+  * Requests that do not come from an authenticated user are
+    rate-limited on a per-IP address basis.  These unauthenticated
+    requests can be made at a rate of 5 requests per minute.
 
-### MongoDB
+  * Requests that come from an authenticated user are rate-limited on a
+    per-user basis.  These authenticated requests can be made at a rate
+    of 10 requests per minute.
 
-If you're using MongoDB, there are many valid ways to organize data in
-your database.  For example, you could use three separate collections to
-store businesses, reviews, and photos.  In this case, you can either use
-[`$lookup`
-aggregation](https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/)
-or multiple queries to gather data for a specific business (i.e. for the
-`GET /businesses/{id}` endpoint).
-
-Alternatively, you could store all photos and reviews as subdocuments of
-their corresponding business document.  In this case, you'll likely want
-to use [a
-projection](https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/)
-to omit the photo and review data from businesses when returning a list
-of all businesses (i.e. from the `GET /businesses` endpoint).  You'll
-also have to think carefully about how you find data for a specific
-user, e.g. a specific user's photos or reviews.  Do do this, you can use
-[subdocument array
-queries](https://docs.mongodb.com/manual/tutorial/query-array-of-documents/)
-to select businesses with reviews/photos by the specified user, and then
-you can use some custom JS to select only matching reviews/photos from
-those businesses.  Alternatively, you can use MongoDB's [aggregation
-pipeline](https://docs.mongodb.com/manual/core/aggregation-pipeline/) to
-structure a single query to fetch exactly the reviews/photos you're
-interested in.
-
-## Connecting the API server to your database
-
-Your API server should read the location (i.e. hostname, port, and
-database name) and credentials (i.e. username and password) for your
-database from environment variables.
-
-## Docker Compose specification
-
-You should write a simple Docker Compose specification that launches
-your entire application (i.e. API server and database server) from
-scratch with a single command.  Your Docker Compose specification in
-this case will specify two containers, one running your API server and
-one running your database server.
-
-When defining your Compose specification, make sure to specify the
-correct environment variables to initialize the database container and
-to allow the API server to connect to the database container, and make
-sure you publish the appropriate port(s) so you can communicate with
-your API.  Note that there is already a Dockerfile in this repository
-representing an image to run your API server, and you can reference this
-Dockerfile within your Compose specification.
-
-**It's a good idea to think about the Docker Compose specification as a
-"production" version of your app.**  In other words, get your server
-working the way you want them to *without* Docker before you worry about
-getting things working with Compose.  It'll lengthen your development
-cycle too much if you continually need to restart the Compose
-application every time you make changes to your server code.
-
-## Extra credit: Use Mongoose
-
-[Mongoose](https://mongoosejs.com/) is an object modeling tool for
-MongoDB that's very similar in spirit to Sequelize for MySQL.  If you
-choose to use MongoDB as your database, you can earn up to 10 points of
-extra credit by using Mongoose instead of the native MongoDB driver for
-Node.js.  To earn this extra credit, you must use Mongoose for all of
-your database interactions.
+This rate-limiting scheme should be backed by a Redis cache that runs in
+a Docker container.  A full specification for the Redis cache should be
+added to `compose.yml` so the entire application can still be launched
+from scratch using Docker Compose.
 
 ## Submission
 
@@ -179,17 +171,20 @@ Make sure your completed files are committed and pushed by the
 assignment's deadline to the main branch of your GitHub repo. Check your
 repo to make sure your files are submitted there.
 
+**Add your `.env` file as a comment to your submission.** If you're not
+using a `.env` file, you need to tell me which environment variables to
+set.
+
 ## Grading criteria
 
 In order to receive a grade, the following needs to work:
 
-1. Open a new shell, change to the project directory, and export
-   necessary environment variables.
-2. In that shell, run `docker compose up`.
-3. Wait for the app to come up.
-4. Open another shell, change to the project directory, and export
-   necessary environment variables.
-5. In that shell, run `sh ./runtests.sh`.
+1. Open a new shell, change to the project directory,
+2. Copy the `.env` file there.
+3. In that shell, run `docker compose up`.
+4. Wait for the app to come up.
+5. Open another shell and change to the project directory.
+6. In that shell, run `sh ./runtests.sh`.
 
 If you have your own cURL tests, you can put them in `runtests.sh`. If
 you are using the supplied Postman tests, put this in your
@@ -208,18 +203,15 @@ you can fix it so I can grade it.
 
 This assignment is worth 100 total points, broken down as follows:
 
-  * 20 points: chosen database runs in a Docker container that is
-    correctly initialized (e.g. by using appropriate environment
-    variables the first time the container is launched)
+  * 30 points: API allows the creation of new users via a `POST /users`
+    endpoint
 
-  * 60 points: all existing API endpoints in the starter code are
-    modified to use your database
+  * 25 points: API allows users to log in via a `POST /users/login`
+    endpoint
 
-  * 10 points: database connection parameters are correctly provided to
-    API server via environment variables
+  * 5 points: API has a `GET /users/{userId}` endpoint that returns
+    appropriate data
 
-  * 10 points: a Docker Compose specification can be used to launch the
-    entire application from scratch
+  * 40 points: API endpoints are authenticated as described above
 
-As described above, you can also earn up to 10 points of extra credit
-for using Mongoose in conjunction with MongoDB.
+In addition, you can earn 10 points of extra credit as described above.

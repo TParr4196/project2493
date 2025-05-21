@@ -10,7 +10,7 @@
 			"name": "businesses",
 			"item": [
 				{
-					"name": "{businessid}",
+					"name": "{businessId}",
 					"item": [
 						{
 							"name": "Fetch data for a specific business.",
@@ -21,43 +21,43 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/businesses/:businessid",
+									"raw": "{{baseUrl}}/businesses/:businessId",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"businesses",
-										":businessid"
+										":businessId"
 									],
 									"variable": [
 										{
-											"key": "businessid",
+											"key": "businessId",
 											"value": "1",
 											"type": "string",
 											"description": "(Required) Unique ID of a business."
 										}
 									]
 								},
-								"description": "Returns complete data for a the business specified by `businessid`.\n"
+								"description": "Returns complete data for a the business specified by `businessId`.\n"
 							},
 							"response": [
 								{
-									"name": "Specified `businessid` not found.",
+									"name": "Specified `businessId` not found.",
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -80,17 +80,17 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -105,7 +105,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n \"ownerid\": 16,\n \"name\": \"American Dream Pizza\",\n \"address\": \"2525 NW Monroe Ave.\",\n \"city\": \"Corvallis\",\n \"state\": \"OR\",\n \"zip\": \"97330\",\n \"phone\": \"541-757-1713\",\n \"category\": \"Restaurant\",\n \"subcategory\": \"Pizza\",\n \"website\": \"http://adpizza.com\",\n \"email\": \"brian@adpizza.com\",\n \"reviews\": [\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  },\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  }\n ],\n \"photos\": [\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"caption\": \"Kale!\"\n  },\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"caption\": \"Kale!\"\n  }\n ]\n}"
+									"body": "{\n \"ownerId\": 16,\n \"name\": \"American Dream Pizza\",\n \"address\": \"2525 NW Monroe Ave.\",\n \"city\": \"Corvallis\",\n \"state\": \"OR\",\n \"zip\": \"97330\",\n \"phone\": \"541-757-1713\",\n \"category\": \"Restaurant\",\n \"subcategory\": \"Pizza\",\n \"website\": \"http://adpizza.com\",\n \"email\": \"brian@adpizza.com\",\n \"reviews\": [\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  },\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  }\n ],\n \"photos\": [\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"caption\": \"Kale!\"\n  },\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"caption\": \"Kale!\"\n  }\n ]\n}"
 								}
 							]
 						},
@@ -115,7 +115,7 @@
 								"auth": {
 									"type": "noauth"
 								},
-								"method": "PUT",
+								"method": "PATCH",
 								"header": [
 									{
 										"key": "Content-Type",
@@ -124,53 +124,53 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"ownerid\": 7,\n\t\"name\": \"Allan's Coffee & Tea\",\n\t\"address\": \"2541 NW Monroe Ave.\",\n\t\"city\": \"Corvallis\",\n\t\"state\": \"OR\",\n\t\"zip\": \"97330\",\n\t\"phone\": \"541-757-0828\",\n\t\"category\": \"Restaurant\",\n\t\"subcategory\": \"Coffee Shop\",\n\t\"website\": \"https://www.allanscoffee.com/\"\n}",
+									"raw": "{\n\t\"ownerId\": 7,\n\t\"name\": \"Allan's Coffee & Tea\",\n\t\"address\": \"2541 NW Monroe Ave.\",\n\t\"city\": \"Corvallis\",\n\t\"state\": \"OR\",\n\t\"zip\": \"97330\",\n\t\"phone\": \"541-757-0828\",\n\t\"category\": \"Restaurant\",\n\t\"subcategory\": \"Coffee Shop\",\n\t\"website\": \"https://www.allanscoffee.com/\"\n}",
 									"options": {
 										"raw": {}
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/businesses/:businessid",
+									"raw": "{{baseUrl}}/businesses/:businessId",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"businesses",
-										":businessid"
+										":businessId"
 									],
 									"variable": [
 										{
-											"key": "businessid",
+											"key": "businessId",
 											"value": "17",
 											"type": "string",
 											"description": "(Required) Unique ID of a business."
 										}
 									]
 								},
-								"description": "Replaces the data for the business specified by `businessid`.\n"
+								"description": "Replaces the data for the business specified by `businessId`.\n"
 							},
 							"response": [
 								{
-									"name": "Specified `businessid` not found",
+									"name": "Specified `businessId` not found",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
+											"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -190,24 +190,24 @@
 								{
 									"name": "Success",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
+											"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -227,24 +227,24 @@
 								{
 									"name": "The request body was either not present or did not contain all of the required fields.",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
+											"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -272,43 +272,43 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/businesses/:businessid",
+									"raw": "{{baseUrl}}/businesses/:businessId",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"businesses",
-										":businessid"
+										":businessId"
 									],
 									"variable": [
 										{
-											"key": "businessid",
+											"key": "businessId",
 											"value": "7",
 											"type": "string",
 											"description": "(Required) Unique ID of a business."
 										}
 									]
 								},
-								"description": "Completely removes the data for the business specified by `businessid`.\n"
+								"description": "Completely removes the data for the business specified by `businessId`.\n"
 							},
 							"response": [
 								{
-									"name": "Specified `businessid` not found",
+									"name": "Specified `businessId` not found",
 									"originalRequest": {
 										"method": "DELETE",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -331,17 +331,17 @@
 										"method": "DELETE",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/businesses/:businessid",
+											"raw": "{{baseUrl}}/businesses/:businessId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"businesses",
-												":businessid"
+												":businessId"
 											],
 											"variable": [
 												{
-													"key": "businessid"
+													"key": "businessId"
 												}
 											]
 										}
@@ -422,7 +422,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n \"pageNumber\": 1,\n \"totalPages\": 127,\n \"pageSize\": 10,\n \"totalCount\": 1264,\n \"lodgings\": [\n  {\n   \"ownerid\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  },\n  {\n   \"ownerid\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  }\n ]\n}"
+							"body": "{\n \"pageNumber\": 1,\n \"totalPages\": 127,\n \"pageSize\": 10,\n \"totalCount\": 1264,\n \"lodgings\": [\n  {\n   \"ownerId\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  },\n  {\n   \"ownerId\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  }\n ]\n}"
 						}
 					]
 				},
@@ -441,7 +441,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\"\n}",
+							"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\"\n}",
 							"options": {
 								"raw": {}
 							}
@@ -465,7 +465,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
+									"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/businesses",
@@ -496,7 +496,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ownerid\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userid\": 7,\n            \"businessid\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
+									"raw": "{\n    \"ownerId\": 16,\n    \"name\": \"American Dream Pizza\",\n    \"address\": \"2525 NW Monroe Ave.\",\n    \"city\": \"Corvallis\",\n    \"state\": \"OR\",\n    \"zip\": \"97330\",\n    \"phone\": \"541-757-1713\",\n    \"category\": \"Restaurant\",\n    \"subcategory\": \"Pizza\",\n    \"website\": \"http://adpizza.com\",\n    \"email\": \"brian@adpizza.com\",\n    \"reviews\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"dollars\": 3,\n            \"stars\": 5,\n            \"review\": \"Great produce!\"\n        }\n    ],\n    \"photos\": [\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        },\n        {\n            \"userId\": 7,\n            \"businessId\": 3,\n            \"caption\": \"Kale!\"\n        }\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/businesses",
@@ -624,7 +624,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n \"userid\": 7,\n \"businessid\": 3,\n \"caption\": \"Kale!\"\n}"
+									"body": "{\n \"userId\": 7,\n \"businessId\": 3,\n \"caption\": \"Kale!\"\n}"
 								}
 							]
 						},
@@ -634,7 +634,7 @@
 								"auth": {
 									"type": "noauth"
 								},
-								"method": "PUT",
+								"method": "PATCH",
 								"header": [
 									{
 										"key": "Content-Type",
@@ -643,7 +643,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 25,\n    \"businessid\": 2,\n    \"caption\": \"Look at this sweet bag of mixed fasteners I just bought!\"\n}",
+									"raw": "{\n    \"userId\": 25,\n    \"businessId\": 2,\n    \"caption\": \"Look at this sweet bag of mixed fasteners I just bought!\"\n}",
 									"options": {
 										"raw": {}
 									}
@@ -672,11 +672,11 @@
 								{
 									"name": "Specified `photoID` not found",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/photos/:photoID",
@@ -709,11 +709,11 @@
 								{
 									"name": "The request body was either not present or did not contain all of the required fields.\n",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/photos/:photoID",
@@ -746,11 +746,11 @@
 								{
 									"name": "Success",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/photos/:photoID",
@@ -781,13 +781,13 @@
 									"body": ""
 								},
 								{
-									"name": "The request tried to change the `userid` or the `businessid` for a photo.  Once a photo is created, these cannot be changed.\n",
+									"name": "The request tried to change the `userId` or the `businessId` for a photo.  Once a photo is created, these cannot be changed.\n",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/photos/:photoID",
@@ -935,7 +935,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userid\": 21,\n    \"businessid\": 10,\n    \"caption\": \"So many books!\"\n}",
+							"raw": "{\n    \"userId\": 21,\n    \"businessId\": 10,\n    \"caption\": \"So many books!\"\n}",
 							"options": {
 								"raw": {}
 							}
@@ -959,7 +959,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+									"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/photos",
@@ -990,7 +990,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"caption\": \"Kale!\"\n}"
+									"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"caption\": \"Kale!\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/photos",
@@ -1118,7 +1118,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n \"userid\": 7,\n \"businessid\": 3,\n \"dollars\": 3,\n \"stars\": 5,\n \"review\": \"Great produce!\"\n}"
+									"body": "{\n \"userId\": 7,\n \"businessId\": 3,\n \"dollars\": 3,\n \"stars\": 5,\n \"review\": \"Great produce!\"\n}"
 								}
 							]
 						},
@@ -1128,7 +1128,7 @@
 								"auth": {
 									"type": "noauth"
 								},
-								"method": "PUT",
+								"method": "PATCH",
 								"header": [
 									{
 										"key": "Content-Type",
@@ -1137,7 +1137,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 25,\n    \"businessid\": 2,\n    \"dollars\": 1,\n    \"stars\": 5,\n    \"review\": \"How many fasteners can one room hold?\"\n}",
+									"raw": "{\n    \"userId\": 25,\n    \"businessId\": 2,\n    \"dollars\": 1,\n    \"stars\": 5,\n    \"review\": \"How many fasteners can one room hold?\"\n}",
 									"options": {
 										"raw": {}
 									}
@@ -1164,13 +1164,13 @@
 							},
 							"response": [
 								{
-									"name": "The request tried to change the `userid` or the `businessid` for a review.  Once a review is created, these cannot be changed.\n",
+									"name": "The request tried to change the `userId` or the `businessId` for a review.  Once a review is created, these cannot be changed.\n",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/reviews/:reviewID",
@@ -1203,11 +1203,11 @@
 								{
 									"name": "Specified `reviewID` not found",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/reviews/:reviewID",
@@ -1240,11 +1240,11 @@
 								{
 									"name": "The request body was either not present or did not contain all of the required fields.\n",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/reviews/:reviewID",
@@ -1277,11 +1277,11 @@
 								{
 									"name": "Success",
 									"originalRequest": {
-										"method": "PUT",
+										"method": "PATCH",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+											"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 										},
 										"url": {
 											"raw": "{{baseUrl}}/reviews/:reviewID",
@@ -1429,7 +1429,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userid\": 21,\n    \"businessid\": 10,\n    \"dollars\": 1,\n    \"stars\": 5,\n    \"review\": \"My favorite bookstore.\"\n}",
+							"raw": "{\n    \"userId\": 21,\n    \"businessId\": 10,\n    \"dollars\": 1,\n    \"stars\": 5,\n    \"review\": \"My favorite bookstore.\"\n}",
 							"options": {
 								"raw": {}
 							}
@@ -1453,7 +1453,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+									"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/reviews",
@@ -1484,7 +1484,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+									"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/reviews",
@@ -1515,7 +1515,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"userid\": 7,\n    \"businessid\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
+									"raw": "{\n    \"userId\": 7,\n    \"businessId\": 3,\n    \"dollars\": 3,\n    \"stars\": 5,\n    \"review\": \"Great produce!\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/reviews",
@@ -1545,7 +1545,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "users/{userid}",
+			"name": "users/{userId}",
 			"item": [
 				{
 					"name": "Fetch a user's owned businesses.",
@@ -1556,25 +1556,25 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userid/businesses",
+							"raw": "{{baseUrl}}/users/:userId/businesses",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userid",
+								":userId",
 								"businesses"
 							],
 							"variable": [
 								{
-									"key": "userid",
+									"key": "userId",
 									"value": "0",
 									"type": "string",
 									"description": "(Required) Unique ID of a user."
 								}
 							]
 						},
-						"description": "Returns a list of all of the businesses owned by the user specified by `userid`.\n"
+						"description": "Returns a list of all of the businesses owned by the user specified by `userId`.\n"
 					},
 					"response": [
 						{
@@ -1583,18 +1583,18 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/users/:userid/businesses",
+									"raw": "{{baseUrl}}/users/:userId/businesses",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"users",
-										":userid",
+										":userId",
 										"businesses"
 									],
 									"variable": [
 										{
-											"key": "userid"
+											"key": "userId"
 										}
 									]
 								}
@@ -1609,7 +1609,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n \"lodgings\": [\n  {\n   \"ownerid\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  },\n  {\n   \"ownerid\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userid\": 7,\n     \"businessid\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  }\n ]\n}"
+							"body": "{\n \"lodgings\": [\n  {\n   \"ownerId\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  },\n  {\n   \"ownerId\": 16,\n   \"name\": \"American Dream Pizza\",\n   \"address\": \"2525 NW Monroe Ave.\",\n   \"city\": \"Corvallis\",\n   \"state\": \"OR\",\n   \"zip\": \"97330\",\n   \"phone\": \"541-757-1713\",\n   \"category\": \"Restaurant\",\n   \"subcategory\": \"Pizza\",\n   \"website\": \"http://adpizza.com\",\n   \"email\": \"brian@adpizza.com\",\n   \"reviews\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"dollars\": 3,\n     \"stars\": 5,\n     \"review\": \"Great produce!\"\n    }\n   ],\n   \"photos\": [\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    },\n    {\n     \"userId\": 7,\n     \"businessId\": 3,\n     \"caption\": \"Kale!\"\n    }\n   ]\n  }\n ]\n}"
 						}
 					]
 				},
@@ -1622,25 +1622,25 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userid/photos",
+							"raw": "{{baseUrl}}/users/:userId/photos",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userid",
+								":userId",
 								"photos"
 							],
 							"variable": [
 								{
-									"key": "userid",
+									"key": "userId",
 									"value": "21",
 									"type": "string",
 									"description": "(Required) Unique ID of a user."
 								}
 							]
 						},
-						"description": "Returns a list of all of the photos posted by the user specified by `userid`.\n"
+						"description": "Returns a list of all of the photos posted by the user specified by `userId`.\n"
 					},
 					"response": [
 						{
@@ -1649,18 +1649,18 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/users/:userid/photos",
+									"raw": "{{baseUrl}}/users/:userId/photos",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"users",
-										":userid",
+										":userId",
 										"photos"
 									],
 									"variable": [
 										{
-											"key": "userid"
+											"key": "userId"
 										}
 									]
 								}
@@ -1675,7 +1675,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n \"lodgings\": [\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"caption\": \"Kale!\"\n  },\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"caption\": \"Kale!\"\n  }\n ]\n}"
+							"body": "{\n \"lodgings\": [\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"caption\": \"Kale!\"\n  },\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"caption\": \"Kale!\"\n  }\n ]\n}"
 						}
 					]
 				},
@@ -1688,25 +1688,25 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userid/reviews",
+							"raw": "{{baseUrl}}/users/:userId/reviews",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userid",
+								":userId",
 								"reviews"
 							],
 							"variable": [
 								{
-									"key": "userid",
+									"key": "userId",
 									"value": "21",
 									"type": "string",
 									"description": "(Required) Unique ID of a user."
 								}
 							]
 						},
-						"description": "Returns a list of all of the reviews written by the user specified by `userid`.\n"
+						"description": "Returns a list of all of the reviews written by the user specified by `userId`.\n"
 					},
 					"response": [
 						{
@@ -1715,18 +1715,18 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/users/:userid/reviews",
+									"raw": "{{baseUrl}}/users/:userId/reviews",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"users",
-										":userid",
+										":userId",
 										"reviews"
 									],
 									"variable": [
 										{
-											"key": "userid"
+											"key": "userId"
 										}
 									]
 								}
@@ -1741,7 +1741,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n \"lodgings\": [\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  },\n  {\n   \"userid\": 7,\n   \"businessid\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  }\n ]\n}"
+							"body": "{\n \"lodgings\": [\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  },\n  {\n   \"userId\": 7,\n   \"businessId\": 3,\n   \"dollars\": 3,\n   \"stars\": 5,\n   \"review\": \"Great produce!\"\n  }\n ]\n}"
 						}
 					]
 				}
