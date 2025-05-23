@@ -33,7 +33,7 @@ function requireAuthentication(req, res, next){
         req.admin=payload.admin;
         next();
     } catch(err) {
-        res.status(401).send(401);
+        res.sendStatus(401);
         // this means we failed
     }
 };
@@ -54,14 +54,13 @@ router.post('/', requireAuthentication, async function (req, res, next) {
   if (validateAgainstSchema(req.body, photoSchema)) {
     const photo = extractValidFields(req.body, photoSchema);
     const [photos] = await mysqlPool.query(`select * FROM photos`);
-    photo.id = photos.length;
     let query = `insert into photos (userid, businessid, caption) values\n`;
     query += `("${req.userid}", "${photo.businessid}", "${photo.caption ?? ""}");`;
-    await mysqlPool.query(query);
+    const [success] = await mysqlPool.query(query);
     res.status(201).json({
-      id: photo.id,
+      id: success.insertId,
       links: {
-        photo: `/photos/${photo.id}`,
+        photo: `/photos/${success.insertId}`,
         business: `/businesses/${photo.businessid}`
       }
     });
@@ -92,10 +91,10 @@ router.get('/:photoID', async function (req, res, next) {
  */
 router.put('/:photoID', requireAuthentication, async function (req, res, next) {
   const photoID = parseInt(req.params.photoID);
-  if (photoID!=req.userid && !req.admin){
+  const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
+  if (photo_raw[0][0].userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
   if (photo_raw[0].length == 1) {
     if (validateAgainstSchema(req.body, photoSchema)) {
       /*
@@ -104,8 +103,8 @@ router.put('/:photoID', requireAuthentication, async function (req, res, next) {
        */
       const updatedPhoto = extractValidFields(req.body, photoSchema);
       const existingPhoto = photo_raw[0][0] ?? {};
-      if (existingPhoto && updatedPhoto.businessid === existingPhoto.businessid && updatedPhoto.userid === existingPhoto.userid) {
-        let query = `update photos set id = ${photoID}, userid = ${updatedPhoto.userid}, businessid = ${updatedPhoto.businessid}, caption = "${updatedPhoto.caption ?? ""}" where id = ${photoID};`
+      if (existingPhoto && updatedPhoto.businessid === existingPhoto.businessid && req.userid === existingPhoto.userid) {
+        let query = `update photos set id = ${photoID}, userid = ${req.userid}, businessid = ${updatedPhoto.businessid}, caption = "${updatedPhoto.caption ?? ""}" where id = ${photoID};`
         await mysqlPool.query(query);
         res.status(200).json({
           links: {
@@ -132,15 +131,15 @@ router.put('/:photoID', requireAuthentication, async function (req, res, next) {
 /*
  * Route to delete a photo.
  */
-router.delete('/:photoID', async function (req, res, next) {
+router.delete('/:photoID', requireAuthentication, async function (req, res, next) {
   const photoID = parseInt(req.params.photoID);
-  if (photoID!=req.userid && !req.admin){
+  const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
+  if (photo_raw[0][0].userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
   if (photo_raw[0].length==1) {
     const success = await mysqlPool.query(`delete from photos where id = ${photoID}`);
-    res.status(204).end();
+    res.status(204).send();
   } else {
     next();
   }

@@ -32,7 +32,7 @@ function requireAuthentication(req, res, next){
         req.admin=payload.admin;
         next();
     } catch(err) {
-        res.status(401).send(401);
+        res.sendStatus(401);
         // this means we failed
     }
 }
@@ -49,6 +49,7 @@ function checkAdmin(req, res, next) {
     } catch(err) {
         req.userid=-1;
         req.admin=false;
+        next();
         // this means we failed
     }
 }
@@ -63,7 +64,7 @@ router.get('/:userid/businesses', requireAuthentication, async function (req, re
   if (userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const userBusinesses = await mysqlPool.query(`SELECT * FROM businesses WHERE ownerid = ${userid}`);
+  const [userBusinesses] = await mysqlPool.query(`SELECT * FROM businesses WHERE ownerid = ${userid}`);
   res.status(200).json({
     businesses: userBusinesses
   });
@@ -77,7 +78,7 @@ router.get('/:userid/reviews', requireAuthentication, async function (req, res) 
   if (userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const userReviews = await mysqlPool.query(`SELECT * FROM reviews WHERE userid = ${userid}`);
+  const [userReviews] = await mysqlPool.query(`SELECT * FROM reviews WHERE userid = ${userid}`);
   res.status(200).json({
     reviews: userReviews
   });
@@ -91,7 +92,7 @@ router.get('/:userid/photos', requireAuthentication, async function (req, res) {
   if (userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const userPhotos = await mysqlPool.query(`SELECT * FROM photos WHERE userid = ${userid}`);
+  const [userPhotos] = await mysqlPool.query(`SELECT * FROM photos WHERE userid = ${userid}`);
   res.status(200).json({
     photos: userPhotos
   });
@@ -114,15 +115,19 @@ const userSchema = {
 router.post('/', checkAdmin, async function (req, res) {
   if(validateAgainstSchema(req.body, userSchema)){
     const user = extractValidFields(req.body, userSchema);
-    const [users] = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [user.email]);
+    const [user_check] = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [user.email]);
+    if (user_check.length>0) {
+      return res.status(400).json({error: "email in use"});
+    }
+    const [users] = await mysqlPool.query('SELECT * FROM users');
     user.id = users.length
     if(user.admin&&!req.admin){
-      return res.status(403).send("must be an admin to create and admin account");
+      return res.status(403).send("must be an admin to create an admin account");
     }
-    let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${await bcrypt.hash(user.password, 8)}, ${user.admin ?? false})`;
+    let query = `INSERT INTO users (name, email, password, admin) VALUES ('${user.name}', '${user.email}', '${await bcrypt.hash(user.password, 8)}', ${user.admin ?? false})`;
     await mysqlPool.query(query);
     res.status(201).json({
-      id: business.id,
+      id: user.id,
       links: {
         users: `/users/${user.id}`
       }
@@ -132,6 +137,7 @@ router.post('/', checkAdmin, async function (req, res) {
       error: "Request body is not a valid user object"
     });
   }
+  return;
 })
 
 router.get('/:userid', requireAuthentication, async function (req, res, next) {
@@ -177,11 +183,12 @@ router.post('/login', async function (req, res, next) {
       const expiration = { "expiresIn": "24h" };
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, expiration);
       const final_token = "eyJhbGciOiJIUzI1NiIsIrI[" + token + "]ffdpiFjzYHaDADmhuV68";
-      res.status(200).send({ "status": "ok", "token": final_token });
+      return res.status(200).send({ "status": "ok", "token": final_token });
     } else {
-      res.status(403).send({ "status": "invalid login" });
+      return res.status(403).send({ "status": "invalid login" });
     }
-  } else {
-    next();
+  } 
+  else {
+    return res.status(403).send({ "status": "invalid login" });
   }
 })

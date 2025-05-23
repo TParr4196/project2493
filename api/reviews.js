@@ -34,7 +34,7 @@ function requireAuthentication(req, res, next){
         req.admin=payload.admin;
         next();
     } catch(err) {
-        res.status(401).send(401);
+        res.sendStatus(401);
         // this means we failed
     }
 };
@@ -60,7 +60,7 @@ router.post('/', requireAuthentication, async function (req, res, next) {
     /*
      * Make sure the user is not trying to review the same business twice.
      */
-    const userReviewedThisBusinessAlready = await mysqlPool.query(`select * FROM reviews where userid = ${review.userid} and businessid = ${review.businessid}`);
+    const userReviewedThisBusinessAlready = await mysqlPool.query(`select * FROM reviews where userid = ${req.userid} and businessid = ${review.businessid}`);
 
     if (userReviewedThisBusinessAlready[0].length > 0) {
       res.status(403).json({
@@ -69,11 +69,11 @@ router.post('/', requireAuthentication, async function (req, res, next) {
     } else {
       let query = `insert into reviews (userid, businessid, dollars, stars, review) values\n`;
       query += `("${req.userid}", "${review.businessid}", "${review.dollars}", "${review.stars}", "${review.review ?? ""}");`;
-      await mysqlPool.query(query);
+      const [success] = await mysqlPool.query(query);
       res.status(201).json({
-        id: review.id,
+        id: success.insertId,
         links: {
-          review: `/reviews/${review.id}`,
+          review: `/reviews/${success.insertId}`,
           business: `/businesses/${review.businessid}`
         }
       });
@@ -104,12 +104,12 @@ router.get('/:reviewID', async function (req, res, next) {
 /*
  * Route to update a review.
  */
-router.put('/:reviewID', async function (req, res, next) {
+router.put('/:reviewID', requireAuthentication, async function (req, res, next) {
   const reviewID = parseInt(req.params.reviewID);
-  if (reviewID!=req.userid && !req.admin){
+  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
+  if (review_raw[0][0].userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
   if (review_raw[0].length == 1) {
     if (validateAgainstSchema(req.body, reviewSchema)) {
       /*
@@ -118,8 +118,8 @@ router.put('/:reviewID', async function (req, res, next) {
        */
       let updatedReview = extractValidFields(req.body, reviewSchema);
       let existingReview = review_raw[0][0] ?? {};
-      if (updatedReview.businessid === existingReview.businessid && updatedReview.userid === existingReview.userid) {
-        let query = `update reviews set id = ${reviewID}, userid = ${updatedReview.userid}, businessid = ${updatedReview.businessid}, dollars = ${updatedReview.dollars}, stars = ${updatedReview.stars}, review = "${updatedReview.caption ?? ""}" where id = ${reviewID};`
+      if (updatedReview.businessid === existingReview.businessid && req.userid === existingReview.userid) {
+        let query = `update reviews set id = ${reviewID}, userid = ${req.userid}, businessid = ${updatedReview.businessid}, dollars = ${updatedReview.dollars}, stars = ${updatedReview.stars}, review = "${updatedReview.caption ?? ""}" where id = ${reviewID};`
         await mysqlPool.query(query);
         res.status(200).json({
           links: {
@@ -146,15 +146,15 @@ router.put('/:reviewID', async function (req, res, next) {
 /*
  * Route to delete a review.
  */
-router.delete('/:reviewID', async function (req, res, next) {
+router.delete('/:reviewID', requireAuthentication, async function (req, res, next) {
   const reviewID = parseInt(req.params.reviewID);
-  if (reviewID!=req.userid && !req.admin){
+  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
+  if (review_raw[0][0].userid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const review_raw = await mysqlPool.query(`select * FROM reviews where id = ${reviewID}`);
   if (review_raw[0].length==1) {
     const success = await mysqlPool.query(`delete from reviews where id = ${reviewID}`);
-    res.status(204).end();
+    res.status(204).send();
   } else {
     next();
   }

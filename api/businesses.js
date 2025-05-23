@@ -142,7 +142,7 @@ function requireAuthentication(req, res, next){
         req.admin=payload.admin;
         next();
     } catch(err) {
-        res.status(401).send(401);
+        res.sendStatus(401);
         // this means we failed
     }
 };
@@ -209,14 +209,13 @@ router.post('/', requireAuthentication, async function (req, res, next) {
   if (validateAgainstSchema(req.body, businessSchema)) {
     const business = extractValidFields(req.body, businessSchema);
     const [businesses] = await mysqlPool.query(`select * FROM businesses`);
-    business.id = businesses.length;
     let query = `insert into businesses (ownerid, name, address, city, state, zip, phone, category, subcategory, website, email) values\n`
     query+=`(${req.userid}, "${business.name}", "${business.address}", "${business.city}", "${business.state}", "${business.zip}", "${business.phone}", "${business.category}", "${business.subcategory}", "${business.website ?? ""}", "${business.email ?? ""}");`
-    await mysqlPool.query(query);
+    const [success] = await mysqlPool.query(query);
     res.status(201).json({
-      id: business.id,
+      id: success.insertId,
       links: {
-        business: `/businesses/${business.id}`
+        business: `/businesses/${success.insertId}`
       }
     });
   } else {
@@ -256,10 +255,10 @@ router.get('/:businessid', async function (req, res, next) {
  */
 router.put('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
-  if (businessid!=req.userid && !req.admin){
+  const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
+  if (business_raw[0][0].ownerid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
   if (business_raw[0].length==1) {
     let newBusiness = business_raw[0][0]
     if (validateAgainstSchema(req.body, businessSchema)) {
@@ -267,7 +266,7 @@ router.put('/:businessid', requireAuthentication, async function (req, res, next
       newBusiness.id = businessid;
       //https://www.w3schools.com/sql/sql_update.asp used for update syntax
       const success = await mysqlPool.query(`update businesses
-set id=${businessid}, ownerid=${newBusiness.ownerid}, name="${newBusiness.name}", address="${newBusiness.address}", city="${newBusiness.city}", state="${newBusiness.state}", zip="${newBusiness.zip}", phone="${newBusiness.phone}", category="${newBusiness.category}", subcategory="${newBusiness.subcategory}", website="${newBusiness.website ?? ""}", email="${newBusiness.email ?? ""}"
+set id=${businessid}, ownerid=${req.userid}, name="${newBusiness.name}", address="${newBusiness.address}", city="${newBusiness.city}", state="${newBusiness.state}", zip="${newBusiness.zip}", phone="${newBusiness.phone}", category="${newBusiness.category}", subcategory="${newBusiness.subcategory}", website="${newBusiness.website ?? ""}", email="${newBusiness.email ?? ""}"
 where id = ${businessid};`)
       res.status(200).json({
         links: {
@@ -290,13 +289,13 @@ where id = ${businessid};`)
  */
 router.delete('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
-  if (businessid!=req.userid && !req.admin){
+  const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
+  if (business_raw[0][0].ownerid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
-  const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
   if (business_raw[0].length==1) {
     const success = await mysqlPool.query(`delete from businesses where id = ${businessid}`);
-    res.status(204).end();
+    res.status(204).send();
   } else {
     next();
   }
