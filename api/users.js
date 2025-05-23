@@ -1,4 +1,7 @@
+require('dotenv').config()
 const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken')
 const { validateAgainstSchema, extractValidFields } = require('../lib/validation');
 
 const mysql_host = process.env.MYSQL_HOST || 'localhost';
@@ -72,7 +75,7 @@ router.post('/', async function (req, res) {
     const user = extractValidFields(req.body, userSchema);
     const [users] = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [user.email]);
     user.id = users.length
-    let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${user.password}, ${user.admin ?? false})`;
+    let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${bcrypt.hash(user.password, 8)}, ${user.admin ?? false})`;
     await mysqlPool.query(query);
     res.status(201).json({
       id: business.id,
@@ -107,6 +110,28 @@ router.get('/:userid', async function (req, res, next) {
     Object.assign(user, user_raw[0][0]);
     delete user.password;
     res.status(200).json(user);
+  } else {
+    next();
+  }
+})
+
+//adapted from challenge 6-1
+router.post('/login', async function (req, res, next) {
+  const user_raw = await mysqlPool.query(`select * FROM users where email = '${req.body.email}'`);
+  let correct = false;
+  if (user_raw[0].length == 1) {
+    const user = user_raw[0][0];
+    console.log(user.password);
+    correct = await bcrypt.compare(req.body.password, user.password);
+    if (correct) {
+      const payload = { "sub": req.body.username };
+      const expiration = { "expiresIn": "24h" };
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, expiration);
+      const final_token = "eyJhbGciOiJIUzI1NiIsIrI[" + token + "]ffdpiFjzYHaDADmhuV68";
+      res.status(200).send({ "status": "ok", "token": final_token });
+    } else {
+      res.status(403).send({ "status": "invalid login" });
+    }
   } else {
     next();
   }

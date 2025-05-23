@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/osu-cs493-sp22/template-assignment-2#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
     "express": "^4.17.3",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.14.1"
   },

@@ -2,6 +2,7 @@
 "use strict";
 require('dotenv').config();
 const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs')
 const mysql_host = process.env.MYSQL_HOST || 'localhost';
 const mysql_port = process.env.MYSQL_PORT || '3306';
 const mysql_db = process.env.MYSQL_DB || 'mysqldb';
@@ -100,9 +101,9 @@ async function init_db() {
   //users
   query = `insert into users (name, email, password, admin) values\n`
   for (let i = 0; i<user_data.length-1; i++){
-    query+=`("${user_data[i].name}", "${user_data[i].email}", "${user_data[i].password}", ${user_data[i].admin ?? false}),\n`
+    query+=`("${user_data[i].name}", "${user_data[i].email}", "${await bcrypt.hash(user_data[i].password, 8)}", ${user_data[i].admin ?? false}),\n`
   }
-  query+=`("${user_data[user_data.length-1].name}", "${user_data[user_data.length-1].email}", "${user_data[user_data.length-1].password}", ${true});`
+  query+=`("${user_data[user_data.length-1].name}", "${user_data[user_data.length-1].email}", "${await bcrypt.hash(user_data[user_data.length-1].password, 8)}", ${true});`
   await mysqlPool.query(query);
 }
 
