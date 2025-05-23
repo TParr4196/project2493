@@ -1,6 +1,7 @@
 "use strict";
 require('dotenv').config();
 const mysql = require('mysql2/promise');
+const jwt = require('jsonwebtoken');
 const mysql_host = process.env.MYSQL_HOST || 'localhost';
 const mysql_port = process.env.MYSQL_PORT || '3306';
 const mysql_db = process.env.MYSQL_DB || 'mysqldb';
@@ -21,11 +22,26 @@ const { validateAgainstSchema, extractValidFields } = require('../lib/validation
 
 exports.router = router;
 
+//adapted from challenge 6-1
+function requireAuthentication(req, res, next){
+    try {
+        const auth_value = req.get('Authorization');
+        const token = auth_value.split("[")[1].split("]")[0];
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        // if we get here, success
+        req.userid=payload.userid;
+        req.admin=payload.admin;
+        next();
+    } catch(err) {
+        res.status(401).send(401);
+        // this means we failed
+    }
+};
+
 /*
  * Schema describing required/optional fields of a photo object.
  */
 const photoSchema = {
-  userid: { required: true },
   businessid: { required: true },
   caption: { required: false }
 };
@@ -34,13 +50,13 @@ const photoSchema = {
 /*
  * Route to create a new photo.
  */
-router.post('/', async function (req, res, next) {
+router.post('/', requireAuthentication, async function (req, res, next) {
   if (validateAgainstSchema(req.body, photoSchema)) {
     const photo = extractValidFields(req.body, photoSchema);
     const [photos] = await mysqlPool.query(`select * FROM photos`);
     photo.id = photos.length;
     let query = `insert into photos (userid, businessid, caption) values\n`;
-    query += `("${photo.userid}", "${photo.businessid}", "${photo.caption ?? ""}");`;
+    query += `("${req.userid}", "${photo.businessid}", "${photo.caption ?? ""}");`;
     await mysqlPool.query(query);
     res.status(201).json({
       id: photo.id,
@@ -74,8 +90,11 @@ router.get('/:photoID', async function (req, res, next) {
 /*
  * Route to update a photo.
  */
-router.put('/:photoID', async function (req, res, next) {
+router.put('/:photoID', requireAuthentication, async function (req, res, next) {
   const photoID = parseInt(req.params.photoID);
+  if (photoID!=req.userid && !req.admin){
+    return res.status(403).send("unauthorized userid");
+  }
   const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
   if (photo_raw[0].length == 1) {
     if (validateAgainstSchema(req.body, photoSchema)) {
@@ -115,6 +134,9 @@ router.put('/:photoID', async function (req, res, next) {
  */
 router.delete('/:photoID', async function (req, res, next) {
   const photoID = parseInt(req.params.photoID);
+  if (photoID!=req.userid && !req.admin){
+    return res.status(403).send("unauthorized userid");
+  }
   const photo_raw = await mysqlPool.query(`select * FROM photos where id = ${photoID}`);
   if (photo_raw[0].length==1) {
     const success = await mysqlPool.query(`delete from photos where id = ${photoID}`);

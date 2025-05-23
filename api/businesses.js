@@ -139,6 +139,7 @@ function requireAuthentication(req, res, next){
         const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
         // if we get here, success
         req.userid=payload.userid;
+        req.admin=payload.admin;
         next();
     } catch(err) {
         res.status(401).send(401);
@@ -255,7 +256,7 @@ router.get('/:businessid', async function (req, res, next) {
  */
 router.put('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
-  if (businessid!=req.userid && req.userid!=0){
+  if (businessid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
   const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
@@ -289,7 +290,7 @@ where id = ${businessid};`)
  */
 router.delete('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
-  if (businessid!=req.userid && req.userid!=0){
+  if (businessid!=req.userid && !req.admin){
     return res.status(403).send("unauthorized userid");
   }
   const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
