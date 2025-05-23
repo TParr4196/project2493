@@ -2,7 +2,8 @@
   {
     "name": "Nick Arzner",
     "email": "nick@block15.com",
-    "password": "hunter2"
+    "password": "hunter2",
+    "admin": true
   },
   {
     "name": "Tori Lockwood",

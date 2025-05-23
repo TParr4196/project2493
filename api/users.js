@@ -37,6 +37,22 @@ function requireAuthentication(req, res, next){
     }
 }
 
+function checkAdmin(req, res, next) {
+  try {
+        const auth_value = req.get('Authorization');
+        const token = auth_value.split("[")[1].split("]")[0];
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        // if we get here, success
+        req.userid=payload.userid;
+        req.admin=payload.admin;
+        next();
+    } catch(err) {
+        req.userid=-1;
+        req.admin=false;
+        // this means we failed
+    }
+}
+
 exports.router = router;
 
 /*
@@ -95,11 +111,14 @@ const userSchema = {
   admin: { required: false },
 };
 
-router.post('/', async function (req, res) {
+router.post('/', checkAdmin, async function (req, res) {
   if(validateAgainstSchema(req.body, userSchema)){
     const user = extractValidFields(req.body, userSchema);
     const [users] = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [user.email]);
     user.id = users.length
+    if(user.admin&&!req.admin){
+      return res.status(403).send("must be an admin to create and admin account");
+    }
     let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${await bcrypt.hash(user.password, 8)}, ${user.admin ?? false})`;
     await mysqlPool.query(query);
     res.status(201).json({
