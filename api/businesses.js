@@ -2,7 +2,8 @@
 "use strict";
 require('dotenv').config();
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const mysql_host = process.env.MYSQL_HOST || 'localhost';
 const mysql_port = process.env.MYSQL_PORT || '3306';
 const mysql_db = process.env.MYSQL_DB || 'mysqldb';
@@ -118,7 +119,6 @@ exports.router = router;
  * Schema describing required/optional fields of a business object.
  */
 const businessSchema = {
-  ownerid: { required: true },
   name: { required: true },
   address: { required: true },
   city: { required: true },
@@ -129,6 +129,21 @@ const businessSchema = {
   subcategory: { required: true },
   website: { required: false },
   email: { required: false }
+};
+
+//adapted from challenge 6-1
+function requireAuthentication(req, res, next){
+    try {
+        const auth_value = req.get('Authorization');
+        const token = auth_value.split("[")[1].split("]")[0];
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        // if we get here, success
+        req.userid=payload.userid;
+        next();
+    } catch(err) {
+        res.status(401).send(401);
+        // this means we failed
+    }
 };
 
 /*
@@ -189,13 +204,13 @@ router.get('/', async function (req, res) {
 /*
  * Route to create a new business.
  */
-router.post('/', async function (req, res, next) {
+router.post('/', requireAuthentication, async function (req, res, next) {
   if (validateAgainstSchema(req.body, businessSchema)) {
     const business = extractValidFields(req.body, businessSchema);
     const [businesses] = await mysqlPool.query(`select * FROM businesses`);
     business.id = businesses.length;
     let query = `insert into businesses (ownerid, name, address, city, state, zip, phone, category, subcategory, website, email) values\n`
-    query+=`(${business.ownerid}, "${business.name}", "${business.address}", "${business.city}", "${business.state}", "${business.zip}", "${business.phone}", "${business.category}", "${business.subcategory}", "${business.website ?? ""}", "${business.email ?? ""}");`
+    query+=`(${req.userid}, "${business.name}", "${business.address}", "${business.city}", "${business.state}", "${business.zip}", "${business.phone}", "${business.category}", "${business.subcategory}", "${business.website ?? ""}", "${business.email ?? ""}");`
     await mysqlPool.query(query);
     res.status(201).json({
       id: business.id,
@@ -222,8 +237,8 @@ router.get('/:businessid', async function (req, res, next) {
      * new object containing all of the business data, including reviews and
      * photos
      */
-    const photos = await mysqlPool.query(`select * FROM photos where businessid = ${businessid}`);
-    const reviews = await mysqlPool.query(`select * FROM reviews where businessid = ${businessid}`);
+    const [photos] = await mysqlPool.query(`select * FROM photos where businessid = ${businessid}`);
+    const [reviews] = await mysqlPool.query(`select * FROM reviews where businessid = ${businessid}`);
     const business = {
       reviews: reviews,
       photos: photos
@@ -238,8 +253,11 @@ router.get('/:businessid', async function (req, res, next) {
 /*
  * Route to replace data for a business.
  */
-router.put('/:businessid', async function (req, res, next) {
+router.put('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
+  if (businessid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
   if (business_raw[0].length==1) {
     let newBusiness = business_raw[0][0]
@@ -269,8 +287,11 @@ where id = ${businessid};`)
 /*
  * Route to delete a business.
  */
-router.delete('/:businessid', async function (req, res, next) {
+router.delete('/:businessid', requireAuthentication, async function (req, res, next) {
   const businessid = parseInt(req.params.businessid);
+  if (businessid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const business_raw = await mysqlPool.query(`select * FROM businesses where id = ${businessid}`);
   if (business_raw[0].length==1) {
     const success = await mysqlPool.query(`delete from businesses where id = ${businessid}`);

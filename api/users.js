@@ -21,13 +21,31 @@ const mysqlPool = mysql.createPool({
 
 const router = require('express').Router();
 
+//adapted from challenge 6-1
+function requireAuthentication(req, res, next){
+    try {
+        const auth_value = req.get('Authorization');
+        const token = auth_value.split("[")[1].split("]")[0];
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        // if we get here, success
+        req.userid=payload.userid;
+        next();
+    } catch(err) {
+        res.status(401).send(401);
+        // this means we failed
+    }
+}
+
 exports.router = router;
 
 /*
  * Route to list all of a user's businesses.
  */
-router.get('/:userid/businesses', async function (req, res) {
+router.get('/:userid/businesses', requireAuthentication, async function (req, res) {
   const userid = parseInt(req.params.userid);
+  if (userid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const userBusinesses = await mysqlPool.query(`SELECT * FROM businesses WHERE ownerid = ${userid}`);
   res.status(200).json({
     businesses: userBusinesses
@@ -37,8 +55,11 @@ router.get('/:userid/businesses', async function (req, res) {
 /*
  * Route to list all of a user's reviews.
  */
-router.get('/:userid/reviews', async function (req, res) {
+router.get('/:userid/reviews', requireAuthentication, async function (req, res) {
   const userid = parseInt(req.params.userid);
+  if (userid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const userReviews = await mysqlPool.query(`SELECT * FROM reviews WHERE userid = ${userid}`);
   res.status(200).json({
     reviews: userReviews
@@ -48,8 +69,11 @@ router.get('/:userid/reviews', async function (req, res) {
 /*
  * Route to list all of a user's photos.
  */
-router.get('/:userid/photos', async function (req, res) {
+router.get('/:userid/photos', requireAuthentication, async function (req, res) {
   const userid = parseInt(req.params.userid);
+  if (userid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const userPhotos = await mysqlPool.query(`SELECT * FROM photos WHERE userid = ${userid}`);
   res.status(200).json({
     photos: userPhotos
@@ -75,7 +99,7 @@ router.post('/', async function (req, res) {
     const user = extractValidFields(req.body, userSchema);
     const [users] = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [user.email]);
     user.id = users.length
-    let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${bcrypt.hash(user.password, 8)}, ${user.admin ?? false})`;
+    let query = `INSERT INTO users (name, email, password, admin) VALUES (${user.name}, ${user.email}, ${await bcrypt.hash(user.password, 8)}, ${user.admin ?? false})`;
     await mysqlPool.query(query);
     res.status(201).json({
       id: business.id,
@@ -90,8 +114,11 @@ router.post('/', async function (req, res) {
   }
 })
 
-router.get('/:userid', async function (req, res, next) {
+router.get('/:userid', requireAuthentication, async function (req, res, next) {
   const userid = parseInt(req.params.userid);
+  if (userid!=req.userid && req.userid!=0){
+    return res.status(403).send("unauthorized userid");
+  }
   const user_raw = await mysqlPool.query(`select * FROM users where id = ${userid}`);
   if (user_raw[0].length==1) {
     /*
@@ -99,9 +126,9 @@ router.get('/:userid', async function (req, res, next) {
      * new object containing all of the user data, including reviews and
      * photos
      */
-    const photos = await mysqlPool.query(`select * FROM photos where userid = ${userid}`);
-    const reviews = await mysqlPool.query(`select * FROM reviews where userid = ${userid}`);
-    const businesses = await mysqlPool.query(`select * FROM businesses where ownerid = ${userid}`);
+    const [photos] = await mysqlPool.query(`select * FROM photos where userid = ${userid}`);
+    const [reviews] = await mysqlPool.query(`select * FROM reviews where userid = ${userid}`);
+    const [businesses] = await mysqlPool.query(`select * FROM businesses where ownerid = ${userid}`);
     const user = {
       businesses: businesses,
       reviews: reviews,
@@ -121,10 +148,14 @@ router.post('/login', async function (req, res, next) {
   let correct = false;
   if (user_raw[0].length == 1) {
     const user = user_raw[0][0];
-    console.log(user.password);
     correct = await bcrypt.compare(req.body.password, user.password);
     if (correct) {
-      const payload = { "sub": req.body.username };
+      let payload;
+      if (user.admin==true){
+        payload = { "userid": 0 }
+      } else {
+        payload = { "userid": user.id };
+      }
       const expiration = { "expiresIn": "24h" };
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, expiration);
       const final_token = "eyJhbGciOiJIUzI1NiIsIrI[" + token + "]ffdpiFjzYHaDADmhuV68";
